@@ -8,7 +8,7 @@ router.route("/")
     .post(function(req,res){
         User.find({ userName: req.body.userName}, function(err, users) {
             if(users.length > 0) {
-                res.send({error: "No"});
+                res.send({error: "There is already a user with this username"});
                 return;
             }
             var user = new User();
@@ -30,6 +30,19 @@ router.route("/")
 				res.send(err);
 			res.json(users);
 		});
+    });
+router.route("/login")
+    .post(function(req,res){
+        User.find( { userName: req.body.userName, password: req.body.password }, function(err, user){
+            if(err)
+                res.send(err);
+            if(user.length === 0)
+                res.send({ message: "Invalid credentials" });
+            if(user.length === 1)
+                res.json({ userId: user[0]._id });
+            else
+                res.send({ message: "Unexpected results" });
+        })
     });
 
 
