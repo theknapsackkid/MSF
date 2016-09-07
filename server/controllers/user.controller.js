@@ -11,12 +11,13 @@ router.route("/")
                 res.send({error: "There is already a user with this username"});
                 return;
             }
+
             var user = new User();
             user.userName = req.body.userName;
             user.password = req.body.password;
             if (req.body.nickName)
                 user.nickName = req.body.nickName
-            
+            user.internalId = "";
             user.save(function(err){
                 if(err)
                     res.send(err);
@@ -45,6 +46,13 @@ router.route("/login")
         })
     });
 
-
+var getUser = (req) => {
+	User.findById(req.header.userId, function(err, user){
+		if(err)
+			return undefined;
+		return user;
+	});
+}
 
 module.exports.routes = router;
+module.exports.lookupUser = getUser;
